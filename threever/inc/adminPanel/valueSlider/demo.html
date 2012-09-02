@@ -1,0 +1,188 @@
+<!doctype html>
+
+<!--
+  ~ jquery.mb.components
+  ~ Copyright (c) 2001-2010. Matteo Bicocchi (Pupunzi); Open lab srl, Firenze - Italy
+  ~ email: mbicocchi@open-lab.com
+  ~ site: http://pupunzi.com
+  ~
+  ~ Licences: MIT, GPL
+  ~ http://www.opensource.org/licenses/mit-license.php
+  ~ http://www.gnu.org/licenses/gpl.html
+  -->
+
+<html>
+<head>
+  <style type="text/css">
+    body{
+      font:14px/14px Arial, sans-serif;
+      color:gray;
+    }
+    .wrapper{
+      font-family:Arial, Helvetica, sans-serif;
+      padding-top:90px;
+      padding-left:50px;
+    }
+    .wrapper h1{
+      font-family:Arial, Helvetica, sans-serif;
+      font-size:26px;
+    }
+
+    #colorChooser, #ex1, #ex0{
+      display:inline-block;
+      background:#f3f3f3;
+      position:relative;
+      padding:10px;
+      -moz-border-radius: 4px;
+      -webkit-border-radius: 4px;
+      -moz-box-shadow:#bbb 1px 1px 2px;
+      -webkit-box-shadow:#bbb 1px 1px 2px;
+      clear:both;
+    }
+
+    #colorChange{
+      width:150px;
+      height:150px;
+      position:relative;
+      border:2px solid white;
+      display:inline-block;
+      float:left;
+      background-color:black;
+      padding:10px;
+      -moz-border-radius: 4px;
+      -webkit-border-radius: 4px;
+      -moz-box-shadow:#bbb 1px 1px 2px;
+      -webkit-box-shadow:#bbb 1px 1px 2px;
+    }
+
+    .setVal{
+      padding:5px;
+      position:relative;
+      top:-5px;
+      margin:3px;
+      width:20px;
+      color:#AAA;
+    }
+
+    .setVal input{
+      font:18px/14px Arial, sans-serif;
+      border:2px solid #ccc;
+      background:none;
+      padding:5px;
+      -moz-border-radius: 4px;
+      -webkit-border-radius: 4px;
+    }
+
+
+  </style>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>mb.slider</title>
+  <link href="css/mb.slider.css" media="all" rel="stylesheet" type="text/css">
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
+  <script type="text/javascript" src="inc/jquery.metadata.js"></script>
+  <script type="text/javascript" src="inc/jquery.mb.slider.js"></script>
+
+  <script type="text/javascript">
+    $(function(){
+      if (self.location.href == top.location.href){
+        $("body").css({font:"normal 13px/16px 'trebuchet MS', verdana, sans-serif"});
+        var logo=$("<a href='http://pupunzi.com'><img id='logo' border='0' src='http://pupunzi.com/images/logo.png' alt='mb.ideas.repository' style='display:none;'></a>").css({position:"absolute"});
+        $("body").prepend(logo);
+        $("#logo").fadeIn();
+      }
+
+      $("#ex0 .mb_slider").mbSlider();
+
+      $("#ex1 .mb_slider").mbSlider({
+        onSlide:function(o){$("#"+o.id+"_val").find(".val").val($(o).mbgetVal());},
+        onSlideLoad:function(o){
+          $("#"+o.id+"_val").find(".val").val($(o).mbgetVal());
+        }
+      });
+
+      $("#ex2 .mb_slider").mbSlider({
+        maxVal:255,
+        onSlideLoad:function(){changeColor($("#R").mbgetVal(),$("#G").mbgetVal(),$("#B").mbgetVal());},
+        onSlide:function(){changeColor($("#R").mbgetVal(),$("#G").mbgetVal(),$("#B").mbgetVal());}
+      });
+
+      //COLOR_PICKER EXAMPLE
+      /************************************************************************************************************/
+      //Function to get hex from rgb colour
+      function rgb2hex(rgb) {
+        var hex= function(x) {
+          var hexDigits = new Array("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F");
+          return isNaN(x) ? "00" : hexDigits[(x - x % 16) / 16] + hexDigits[x % 16];
+        };
+        return "#" + hex(rgb[0]) + hex(rgb[1]) + hex(rgb[2]);
+      }
+
+      //Function to get rgb from hex colour
+      function hex2rgb(v){
+        var val=(v.charAt(0)=="#") ? v.substring(1,7):"ffffff";
+        var R=parseInt(val.substring(0,2),16);
+        var G=parseInt(val.substring(2,4),16);
+        var B=parseInt(val.substring(4,6),16);
+        return [R,G,B];
+      }
+
+      function changeColor(R,G,B){
+        var HEX=rgb2hex([R,G,B]);
+        $("#colorChange").css("backgroundColor", HEX );
+        $("#colorValueHex").html("<b>"+HEX+"</b>");
+        $("#colorValueRGB").html("<b>rgb ("+hex2rgb(HEX)[0]+", "+hex2rgb(HEX)[1]+", "+hex2rgb(HEX)[2]+")</b>");
+      }
+      /************************************************************************************************************/
+    });
+  </script>
+
+</head>
+<body>
+
+<div class="wrapper">
+  <h1>mb.slider.demo</h1>
+  <div id="ex0" style="">
+    <div id="s1"  class="mb_slider {rangeColor:'gray',negativeColor:'#ffcc00', startAt:78, grid:1}" style="display:inline-block;*display:inherit;"></div>
+    <br>
+    <div id="s2" class="mb_slider {rangeColor:'gray', startAt:-30}" style="display:inline-block;*display:inherit;"></div>
+    <br>
+    <div id="s3" class="mb_slider {rangeColor:'gray', startAt:-30, grid:10, minVal:-100}" style="display:inline-block;*display:inherit;"></div>
+  </div>
+  <br>
+  <br>
+  <div id="ex1" style="">
+    you can change the value either with the slider or by changing the input value:<br><br><br>
+    <div id="sl1"  class="mb_slider {rangeColor:'orange',negativeColor:'#ffcc00', startAt:78, grid:1}" style="display:inline-block;*display:inherit;"></div>
+    <span id="sl1_val" class="setVal"><input class="val" value="50" style="width:50px;" onkeyup="$('#sl1').mbsetVal($(this).val());"></span>
+    <span>rangeColor:'orange', negativeColor:'#ffcc00', startAt:78, grid:1</span>
+    <br>
+    <div id="sl2" class="mb_slider {rangeColor:'#999', startAt:-40}" style="display:inline-block;*display:inherit;"></div>
+    <span id="sl2_val" class="setVal"><input class="val" value="50" style="width:50px;" onkeyup="$('#sl2').mbsetVal($(this).val());"></span>
+    <span>rangeColor:'#999', startAt:-40, grid:5</span>
+    <br>
+    <div id="sl3" class="mb_slider {rangeColor:'#32CCFF', startAt:-30, grid:10, minVal:-100}" style="display:inline-block;*display:inherit;"></div>
+    <span id="sl3_val" class="setVal"><input class="val" value="50" style="width:50px;" onkeyup="$('#sl3').mbsetVal($(this).val());"></span>
+    <span>rangeColor:'#32CCFF', startAt:-30, grid:10, minVal:-100</span>
+  </div>
+  <br>
+  <br>
+  <div id="colorChooser">
+    <div id="colorChange"></div>
+
+    <div id="ex2" style="display:inline-block;position:relative;">
+      <div id="R" class="mb_slider {rangeColor:'red',negativeColor:'#ffcc00', startAt:100, grid:1, maxVal:255}" style="display:inline-block;"></div><br>
+      <div id="G" class="mb_slider {rangeColor:'lime',negativeColor:'#ffcc00', startAt:45, grid:1, maxVal:255}" style="display:inline-block;"></div><br>
+      <div id="B" class="mb_slider {rangeColor:'blue',negativeColor:'#ffcc00', startAt:74, grid:1, maxVal:255}" style="display:inline-block;"></div>
+    </div>
+    <br>
+    <div style="clear:both;padding:20px;">
+      <span id="colorValueHex" style="color:black;padding:10px; font:18px/16px Arial"></span><br><br>
+      <span id="colorValueRGB" style="color:black;padding:10px; font:18px/16px Arial"></span>
+    </div>
+  </div>
+</div>
+
+<br>
+<br>
+</body>
+</html>

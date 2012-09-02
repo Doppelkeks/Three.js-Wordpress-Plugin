@@ -1,0 +1,881 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title>Threever</title>
+	<link href="valueSlider/css/mb.slider.css" media="all" rel="stylesheet" type="text/css">
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
+	<script type="text/javascript" src="jscolor/jscolor.js"></script>
+	<script type="text/javascript" src="valueSlider/inc/jquery.metadata.js"></script>
+    <script type="text/javascript" src="valueSlider/inc/jquery.mb.slider.js"></script>
+	
+	<style type="text/css">
+	#threeverContainer .errorField{
+		position:fixed;
+		border-top:2px solid #000;
+		background-color:rgb(102, 102, 102);
+		width:98%;
+		padding:5px;
+		font-weight:700;
+		height:50px;
+		color:#fff;
+		display:none;
+		bottom:0px;
+		left:0px;
+		
+	}
+	*{font-family: Arial;}
+	#threeverContainer h3,h2,p,ul,li{
+	padding:0;
+	margin:0;
+	}
+	
+	#threeverContainer .formSection{
+		width:500px;
+	}
+	
+	#lightTemplate, #threeverContainer .advOpts, #threeverContainer #customLight, #threeverContainer #customCam .formSectionOption, #threeverContainer #material .formSectionOption{
+		display:none;
+	}
+	#threeverContainer.clear{
+		clear:both;
+	}
+	
+	#threeverContainer br{clear:both;}
+	
+	#threeverContainer label{
+		line-height:24px;
+		height:24px;
+		display:inline-block;
+		width:90px;
+		margin-top:5px;
+		text-indent:5px;
+	}
+	
+	#threeverContainer .formSection input[type=text]{
+		width:385px;
+		display:inline;
+		line-height:24px;
+		height:24px;
+		margin-bottom:5px;
+	}
+	
+	#threeverContainer .formSection .formSectionOption, #threeverContainer .formSection .formSectionOptionStatic{
+		border: 1px solid #333;
+		padding:5px;
+		margin-bottom:5px;
+		margin-top:12px;
+	}
+	
+	#threeverContainer .formSection .formSectionOption h3, #threeverContainer .formSection .formSectionOptionStatic h3{
+		text-align:right;
+		margin-top:-17px;
+		height:24px;
+		line-height:24px;
+	}
+	
+	#threeverContainer .formSection .formSectionOption h3 b, #threeverContainer .formSection .formSectionOptionStatic h3 b{
+		font-weight:700;
+		background-color:#ccc;
+	}
+	
+	#threeverContainer .formSection h2{
+		border-bottom:1px solid #333;
+	}
+	
+	#threeverContainer .formSection{
+		border-bottom:1px solid #333;
+		padding-bottom:10px;
+		margin-bottom:10px;
+		background-color:#ccc;
+		background-image:url(images/edge.png);
+		background-repeat:no-repeat;
+		background-position:right top;
+		padding:5px;
+	}
+	#threeverContainer #camera.formSection input[type=text],#threeverContainer #light.formSection input[type=text],#threeverContainer #canvas.formSection input[type=text]{
+		width:50px;
+	}
+	
+	#threeverContainer #material.formSection input[type=text]{
+		width:280px;
+	}
+	
+	#threeverContainer #material.formSection label{
+		width:70px;
+	}
+	
+	#threeverContainer #camera.formSection label{
+		width:60px;
+	}
+	
+	#threeverContainer #cameraPosition.formSectionOption label,#threeverContainer #addedLights .formSectionOption label{
+		width:30px;
+	}
+	#threeverContainer #addedLights .lightElement div{
+		float:right;
+		margin-right:10px;
+		margin-top:5px;
+	}
+	#threeverContainer #addedLights .lightElement div input{
+		margin-left:30px;
+	}
+	#threeverContainer .formSection .radioOpts span{
+		float:right;
+		background-color:#ccc;
+		cursor:pointer;
+	}
+	#threeverContainer .formSection .radioOpts div{
+		padding:3px;
+		margin-top:5px;
+		margin-bottom:5px;
+		background-color:#aaa;
+	}
+	
+	#threeverContainer .formSection .threeverFormError{
+		clear:both;
+		text-align:right;
+	}
+	.line{
+	height:1px;
+	border-bottom:1px solid #aaa;
+	}
+	
+	#threeverContainer .formSection .advOptsBtn{
+		background-color:#aaa;
+		padding:3px;
+		text-align:right;
+	}
+	#threeverContainer .formSection .advOptsBtn b{
+		background-color:#ccc;
+		font-weight:400;
+	}
+	#threeverContainer .formSection input#customSetup{
+		opacity:0;
+	}
+	
+	#threeverContainer #material.formSection input.colorInput, #threeverContainer #light.formSection input.colorInput {
+		width:25px;
+		height:24px;
+		background-image: url(images/picker.gif) !important;
+		text-indent: -3000px;
+		cursor:pointer;
+	}
+
+	</style>
+	
+</head>
+<body>
+	<div id="threeverContainer">
+		<form action="">
+			<div id="canvas" class="formSection">
+				<h2>Canvas</h2>
+				<label for="width">width (px)</label><input type="text" name="width" />	
+				<label for="height">height (px)</label><input type="text" name="height" />	
+			</div>
+			
+			<div id="mesh" class="formSection">
+				<h2>Mesh</h2>
+				
+				<label for="filepath">Filepath</label>
+				<input type="text" name="filepath" />	
+			</div>
+			<div id="camera" class="formSection">
+				<h2>Camera</h2>
+				
+				<div id="cameraTypes" class="radioOpts">
+					<div><input type="radio" name="cameraType" value="perspective" /> Perspective <!--<span id="persCustomBtn">[ Customize ]</span>--></div>
+					<div><input type="radio" name="cameraType" value="orthographic" /> Orthographic <!--<span id="orthCustomBtn">[ Customize ]</span>--></div>
+				</div>
+				
+				<div id="customCam">
+					<div id="persCustomCam" class="formSectionOption">
+						<h3><b>Perspective</b></h3>
+						<label for="fov">fov</label><input type="text" name="fov" />
+						<label for="aspect">aspect</label><input type="text" name="aspect" /><div class="line"></div>
+						<label for="near">near</label><input type="text" name="near" />
+						<label for="far">far</label><input type="text" name="far" />
+						<div class="clear"></div>
+					</div>
+					
+					<div id="orthCustomCam" class="formSectionOption">
+						<h3><b>Orthographic</b></h3>
+						<label for="fov">left</label><input type="text" name="left" />
+						<label for="right">right</label><input type="text" name="right" />
+						<label for="top">top</label><input type="text" name="top" />
+						<label for="bottom">bottom</label><input type="text" name="bottom" /><div class="line"></div>
+						<label for="near">near</label><input type="text" name="near" />
+						<label for="far">far</label><input type="text" name="far" />
+						<div class="clear"></div>
+					</div>
+				</div>
+				
+				
+				<div class="advOptsBtn"><i class="advOptsIcon"></i> <b>[ more ]</b> </div>
+				<div class="advOpts">
+					<div id="cameraPosition" class="formSectionOption">
+						<h3><b>Camera Position</b></h3>
+						<label for="camPosX">x</label><input type="text" name="camPosX" />
+						<label for="camPosY">y</label><input type="text" name="camPosY" />
+						<label for="camPosZ">z</label><input type="text" name="camPosZ" />
+						<div class="clear"></div>
+					</div>	
+				</div>
+				
+			</div>
+			<div id="light" class="formSection">
+				<h2>Lights</h2>
+				
+				<div id="lightTypes" class="radioOpts">
+					<div><input type="radio" name="lightType" value="standard"/> Standard Setup </div>
+					<div><input type="radio" name="lightType" value="3Point" /> 3 PointLight Setup </div>
+					<div><input type="radio" name="lightType" id="customSetup" value="custom" /> <span>[ Custom Setup ]</span> </div>
+				</div>
+				
+				<div id="customLight" class="formSectionOption">
+					<h3><b>Custom Setup</b></h3>
+					<div id="addLight" class="radioOpts">
+						<div>
+							Type
+							<select name="lightForm" id="lightForm">
+								<option value="point">Point</option>
+								<option value="directional">Directional</option>
+								<option value="spot">Spot</option>
+								<option value="ambient">Ambient</option>
+							</select>
+							<span>[ Add Light ]</span>
+						</div>
+					</div>
+					
+					<div id="addedLights">
+						
+					</div>
+				</div>
+				
+			</div>
+			<div id="material" class="formSection">
+				<h2>Material</h2>
+				
+				<div id="diffuse" class="diffuse formSectionOptionStatic">
+					<h3> <b>Diffuse</b> </h3>
+					<label for="tdiffuse">Texture</label>
+					<input type="text" name="tdiffuse" />
+					<label for="dcolor">Color</label>
+					<input type="text" class="color colorInput" name="matColor"/>
+				</div>
+				
+				<div id="specular" class="specular formSectionOptionStatic">
+					<h3> <b>Specular</b> </h3>
+					<label for="tspecular">Texture</label>
+					<input type="text" name="tspecular" />
+					<label for="scolor">Color</label>
+					<input type="text" class="color colorInput" name="matColor"/><br>
+					<label for="shine">Shine</label>
+					<div class="valueSlider mb_slider {rangeColor:'#333333',negativeColor:'#444444', startAt:35, grid:1}" style="display:inline-block;*display:inherit;"></div>
+				</div>
+				
+				<div id="addChannel" class="radioOpts">
+					<div>
+						Channel
+						<select name="materialForm" id="materialForm">
+							<option value="normal">Normal</option>
+						</select>
+						<span>[ Add Channel ]</span>
+					</div>
+				</div>
+
+				<div id="normal" class="normal formSectionOption">
+					<h3> <b>Normal <span>[delete]</span></b> </h3>
+					<label for="tnormal">Texture</label>
+					<input type="text" name="tnormal" /><br />
+					<label for="strength">Strength</label>
+					<div class="valueSlider mb_slider {rangeColor:'#333333',negativeColor:'#444444', startAt:16, grid:1}" style="display:inline-block;*display:inherit;"></div>
+				</div>
+				
+				<div class="advOptsBtn"><i class="advOptsIcon"></i> <b>[ more ]</b> </div>
+				<div class="advOpts">
+					<input type="checkbox" name="doublesided" value="doublesided" />doubleSided </br>
+					<input type="checkbox" name="wireframe" value="wireframe" />wireframe </br>	
+				</div>	
+			</div>
+			
+			<div id="submitFormBtn">Generate Shortcode</div>
+		</form>
+	
+		<div id="lightTemplate">
+			<div class="ambient lightElement formSectionOption">
+				<h3> <b>AmbientLight <span>[delete]</span></b> </h3>
+				<div>Color <input type="text" name="lightColor" class="color lcolor colorInput" /></div>
+				<br />
+			</div>
+			
+			<div class="directional lightElement formSectionOption">
+				<h3> <b>DirectionalLight <span>[delete]</span></b></h3>
+				<label for="lightPosX">x</label><input type="text" name="lightPosX" />
+				<label for="lightPosY">y</label><input type="text" name="lightPosY" />
+				<label for="lightPosZ">z</label><input type="text" name="lightPosZ" />
+				<div>Color <input type="text" name="lightColor" class="color lcolor colorInput" /></div>
+				<br />
+			</div>
+			
+			<div class="point lightElement formSectionOption">
+				<h3> <b>PointLight <span>[delete]</span></b></h3>
+				<label for="lightPosX">x</label><input type="text" name="lightPosX" />
+				<label for="lightPosY">y</label><input type="text" name="lightPosY" />
+				<label for="lightPosZ">z</label><input type="text" name="lightPosZ" />
+				<div>Color <input type="text" name="lightColor" class="color lcolor colorInput" /></div>
+				<br />
+			</div>
+			
+			<div class="spot lightElement formSectionOption">
+				<h3> <b>SpotLight <span>[delete]</span></b> </h3>
+				<label for="lightPosX">x</label><input type="text" name="lightPosX" />
+				<label for="lightPosY">y</label><input type="text" name="lightPosY" />
+				<label for="lightPosZ">z</label><input type="text" name="lightPosZ" />
+				<div>Color <input type="text" name="lightColor" class="color lcolor colorInput" /></div>
+				<br />
+			</div>
+		</div>
+	<div class="errorField"></div>
+	</div>
+	
+	<!--<div id="codeField">
+		<textarea name="threeverCode" id="threeverCode" cols="30" rows="10"></textarea>
+	</div>-->
+	
+<script type="text/javascript">
+
+var defaults;
+
+/**
+ * Converts the given data structure to a JSON string.
+ * Argument: arr - The data structure that must be converted to JSON
+ * Example: var json_string = array2json(['e', {pluribus: 'unum'}]);
+ * 			var json = array2json({"success":"Sweet","failure":false,"empty_array":[],"numbers":[1,2,3],"info":{"name":"Binny","site":"http:\/\/www.openjs.com\/"}});
+ * http://www.openjs.com/scripts/data/json_encode.php
+ */
+ 
+function array2json(arr) {
+    var parts = [];
+    var is_list = (Object.prototype.toString.apply(arr) === '[object Array]');
+
+    for(var key in arr) {
+    	var value = arr[key];
+        if(typeof value == "object") { //Custom handling for arrays
+            if(is_list) parts.push(array2json(value)); /* :RECURSION: */
+            else parts[key] = array2json(value); /* :RECURSION: */
+        } else {
+            var str = "";
+            if(!is_list) str = '"' + key + '":';
+
+            //Custom handling for multiple data types
+            if(typeof value == "number") str += value; //Numbers
+            else if(value === false) str += 'false'; //The booleans
+            else if(value === true) str += 'true';
+            else str += '"' + value + '"'; //All other things
+            // :TODO: Is there any more datatype we should be in the lookout for? (Functions?)
+
+            parts.push(str);
+        }
+    }
+    var json = parts.join(",");
+    
+    if(is_list) return '[' + json + ']';//Return numerical JSON
+    return '{' + json + '}';//Return associative JSON
+}
+
+function isEmpty(str) {
+    return (!str || 0 === str.length);
+}
+function isBlank(str) {
+    return (!str || /^\s*$/.test(str));
+}
+
+//init
+$(".valueSlider").mbSlider({onSlide:function(){processFormData()}});
+
+$("#threeverContainer .radioOpts input").each(function(index){
+	$(this).removeAttr("checked");
+	//console.log("ok");
+});
+$($("#threeverContainer #lightTypes.radioOpts input")[0]).attr('checked','checked');
+$($("#threeverContainer #cameraTypes.radioOpts input")[0]).attr('checked','checked');
+
+defaults = new Array();
+defaults["width"] = 600;
+defaults["height"] = 300;
+defaults["filepath"] = "meshurl here";
+defaults["persCamera"] = [45,defaults["width"]/defaults["height"],0.1,10000];
+defaults["orthCamera"] = [defaults["width"] / - 2, defaults["width"] / 2, defaults["height"] / 2, defaults["height"] / - 2, 1, 1000];
+defaults["cameraPos"] = [0,0,200];
+defaults["matColor"] = "333333";
+defaults["lightColor"] = "ffffff";
+defaults["lightPos"] = [0,0,0];
+defaults["lightPreset"] = [[[0x221100],[0xffeedd, [0 , -40, 100]],[],[]], //standard
+						  [[] , [], [[0xffeedd, [0 , 50, -100]], [0xffeedd, [-50 , 0, 50]], [0xffeedd, [50 , 50, 50]]],[]]]; //3Point
+
+						  
+
+//Canvas
+$("#threeverContainer #canvas input[name=width]").val(defaults["width"]);
+$("#threeverContainer #canvas input[name=height]").val(defaults["height"]);
+		
+//Mesh
+$("#threeverContainer #mesh input[name=filepath]").val(defaults["filepath"]);	
+
+//Cameras
+//perspective
+$("#threeverContainer #customCam #persCustomCam input[name=fov]").val(defaults["persCamera"][0]);
+$("#threeverContainer #customCam #persCustomCam input[name=aspect]").val(defaults["persCamera"][1]);
+$("#threeverContainer #customCam #persCustomCam input[name=near]").val(defaults["persCamera"][2]);
+$("#threeverContainer #customCam #persCustomCam input[name=far]").val(defaults["persCamera"][3]);
+//orthographic
+$("#threeverContainer #customCam #orthCustomCam input[name=left]").val(defaults["orthCamera"][0]);
+$("#threeverContainer #customCam #orthCustomCam input[name=right]").val(defaults["orthCamera"][1]);
+$("#threeverContainer #customCam #orthCustomCam input[name=top]").val(defaults["orthCamera"][2]);
+$("#threeverContainer #customCam #orthCustomCam input[name=bottom]").val(defaults["orthCamera"][3]);
+$("#threeverContainer #customCam #orthCustomCam input[name=near]").val(defaults["orthCamera"][4]);
+$("#threeverContainer #customCam #orthCustomCam input[name=far]").val(defaults["orthCamera"][5]);
+
+//Camera Position
+$("#threeverContainer #cameraPosition input[name=camPosX]").val(defaults["cameraPos"][0]);
+$("#threeverContainer #cameraPosition input[name=camPosY]").val(defaults["cameraPos"][1]);
+$("#threeverContainer #cameraPosition input[name=camPosZ]").val(defaults["cameraPos"][2]);
+
+//Material Colors
+$("#threeverContainer input[name=matColor]").val(defaults["matColor"]);
+
+//Lights
+$("#threeverContainer input[name=lightColor]").val(defaults["lightColor"]);
+$("#threeverContainer input[name=lightPosX]").val(defaults["lightPos"][0]);
+$("#threeverContainer input[name=lightPosY]").val(defaults["lightPos"][1]);
+$("#threeverContainer input[name=lightPosZ]").val(defaults["lightPos"][2]);
+
+
+//Templates
+var template = "#threeverContainer #lightTemplate .lightElement";
+	
+var templates = new Array();
+	templates["ambient"] = $($(template)[0]).clone(true).wrap('<p>').parent().html();
+	templates["directional"] = $($(template)[1]).clone(true).wrap('<p>').parent().html();
+	templates["point"] = $($(template)[2]).clone(true).wrap('<p>').parent().html();
+	templates["spot"] = $($(template)[3]).clone(true).wrap('<p>').parent().html();
+
+
+$("#threeverContainer #cameraTypes div input").each(function(index){
+	if($(this).attr('checked') == 'checked'){
+		if(index == 0){
+			$($("#threeverContainer #customCam .formSectionOption")[1]).hide();
+			$($("#threeverContainer #customCam .formSectionOption")[0]).show();
+		}else if(index == 1){
+			$($("#threeverContainer #customCam .formSectionOption")[0]).hide();
+			$($("#threeverContainer #customCam .formSectionOption")[1]).show();
+			
+		}
+	}
+});
+
+$("#threeverContainer #lightTypes.radioOpts input").each(function(index){
+	if($(this).attr('checked') == 'checked'){
+		if(index == 2){
+			$("#threeverContainer #customLight").show();
+			$($("#threeverContainer #lightTypes.radioOpts input")[1]).removeAttr("checked");
+			$($("#threeverContainer #lightTypes.radioOpts input")[0]).removeAttr("checked");
+			$($("#threeverContainer #lightTypes.radioOpts input")[2]).attr('checked','checked');
+		}
+	}
+});
+
+//More Options Button
+$("#threeverContainer .advOptsBtn").each(function(index){
+	$(this).toggle(function(){$($("#threeverContainer .advOpts")[index]).show();},function(){$($("#threeverContainer .advOpts")[index]).hide();});
+});
+
+//Camera Control
+$("#threeverContainer #cameraTypes div").each(function(index){
+	$(this).click(function(){
+		if(index == 0){
+			$($("#threeverContainer #cameraTypes div input")[1]).removeAttr("checked");
+			$($("#threeverContainer #cameraTypes div input")[0]).attr('checked','checked');
+			$($("#threeverContainer #customCam .formSectionOption")[1]).hide();
+			$($("#threeverContainer #customCam .formSectionOption")[0]).show();
+		}else if(index == 1){
+			$($("#threeverContainer #cameraTypes div input")[0]).removeAttr("checked");
+			$($("#threeverContainer #cameraTypes div input")[1]).attr('checked','checked');
+			$($("#threeverContainer #customCam .formSectionOption")[0]).hide();
+			$($("#threeverContainer #customCam .formSectionOption")[1]).show();
+			
+		}
+	});	
+});
+
+//Light Control
+$("#threeverContainer #lightTypes.radioOpts div").each(function(index){
+	$(this).click(function(){
+
+		if(index == 0){
+			$("#threeverContainer #customLight").hide();
+			$($("#threeverContainer #lightTypes.radioOpts input")[2]).removeAttr("checked");
+			$($("#threeverContainer #lightTypes.radioOpts input")[1]).removeAttr("checked");
+			$($("#threeverContainer #lightTypes.radioOpts input")[0]).attr('checked','checked');
+			
+		}else if(index == 1){
+			$("#threeverContainer #customLight").hide();
+			$($("#threeverContainer #lightTypes.radioOpts input")[2]).removeAttr("checked");
+			$($("#threeverContainer #lightTypes.radioOpts input")[0]).removeAttr("checked");
+			$($("#threeverContainer #lightTypes.radioOpts input")[1]).attr('checked','checked');
+			
+		}else if(index == 2){
+			$("#threeverContainer #customLight").show();
+			$($("#threeverContainer #lightTypes.radioOpts input")[1]).removeAttr("checked");
+			$($("#threeverContainer #lightTypes.radioOpts input")[0]).removeAttr("checked");
+			$($("#threeverContainer #lightTypes.radioOpts input")[2]).attr('checked','checked');
+		}
+	});	
+});
+
+function addLights(){
+	var selected = $("#threeverContainer #addLight select#lightForm option:selected").attr('value');
+	
+	if(selected === "ambient"){
+		console.log("ambient");
+		$("#threeverContainer #addedLights").append(templates["ambient"]);
+		$("#threeverContainer #addLight select#lightForm option[value=ambient]").remove();
+		new jscolor.color($("#threeverContainer #addedLights .ambient input.color")[0], {});
+		
+	}else if(selected === "directional"){
+		console.log("directional");
+		$("#threeverContainer #addedLights").append(templates["directional"]);
+		$("#threeverContainer #addLight select#lightForm option[value=directional]").remove();
+		new jscolor.color($("#threeverContainer #addedLights .directional input.color")[0], {});
+		
+	}else if(selected === "point"){
+		console.log("point");
+		$("#threeverContainer #addedLights").append(templates["point"]);
+		var pointl = $("#threeverContainer #addedLights .point input.color");
+		new jscolor.color($(pointl)[pointl.length-1], {});
+		
+	}else if(selected === "spot"){
+		console.log("spot");
+		$("#threeverContainer #addedLights").append(templates["spot"]);
+		var spotl = $("#threeverContainer #addedLights .spot input.color");
+		new jscolor.color($(spotl)[spotl.length-1], {});
+	}
+	
+	//unbind old listeners
+	$("#threeverContainer #addedLights input").unbind('blur');
+	$("#threeverContainer #addedLights .lightElement h3 span").unbind('click');
+	
+	//Light Defaults
+	$("#threeverContainer input[name=lightColor]").val(defaults["lightColor"]);
+	$("#threeverContainer input[name=lightPosX]").val(defaults["lightPos"][0]);
+	$("#threeverContainer input[name=lightPosY]").val(defaults["lightPos"][1]);
+	$("#threeverContainer input[name=lightPosZ]").val(defaults["lightPos"][2]);
+	
+	//add blur listener
+	$("#threeverContainer #addedLights input").each(function(index){$(this).blur(function(){processFormData()});});
+	
+	//add option / remove funtionality
+	$("#threeverContainer #addedLights .lightElement h3 span").each(function(index){
+		$(this).click(function(){
+			console.log("triggered");
+			var item = $("#threeverContainer #addedLights .lightElement")[index];
+	
+			if($(item).hasClass('ambient')){
+				$("#threeverContainer #addLight select#lightForm").append('<option value="ambient">Ambient</option>');
+			}else if($(item).hasClass('directional')){
+				$("#threeverContainer #addLight select#lightForm").append('<option value="directional">Directional</option>');
+			}
+			
+			$(item).remove();
+		});
+	});
+	
+}
+$("#threeverContainer #addLight span").click(function(){addLights()});
+$("#threeverContainer #addLight select#lightForm").change(function(){addLights()});
+
+function addChannel(){
+	var selected = $("#threeverContainer #addChannel select#materialForm option:selected").attr('value');
+
+	if(selected === "normal"){
+		$("#threeverContainer #normal").show();
+		$("#threeverContainer #addChannel select#materialForm option[value=normal]").remove();
+		
+	}
+}
+	
+$("#threeverContainer #material #normal.formSectionOption h3 span").click(function(){
+	$("#threeverContainer #addChannel select#materialForm").append('<option value="normal">Normal</option>');
+	$("#threeverContainer #material #normal.formSectionOption").hide();
+});
+
+$("#threeverContainer #addChannel span").click(function(){addChannel()});
+$("#threeverContainer #addChannel select#materialForm").change(function(){addChannel()});
+
+
+function checkElemStr(elem,defaultV){
+	var str = $(elem).val();
+	str = (isEmpty(str) || isBlank(str)) ? defaultV : str;
+	$(elem).val(str);
+	
+	return str;
+}
+
+function checkElemInt(elem,defaultV){
+	var num = parseInt($(elem).val());
+	num = (isNaN(num) || num === null) ? defaultV : num;
+	$(elem).val(num);
+	
+	return num;
+}
+
+function checkElemNum(elem,defaultV){
+	var num = $(elem).val();
+	num = (isNaN(num) || num === null || isEmpty(num) || isBlank(num)) ? defaultV : num;
+	$(elem).val(num);
+	
+	return num;
+}
+
+function lightQueue(elem){
+	var lightPos = new Array();
+	for(var j=0; j<elem.length-1; j++){
+		lightPos.push(checkElemInt($(elem)[j],defaults["lightPos"][j]));
+		//console.log($($(elem)[j]).val());
+	}
+	var lightColor = parseInt($($(elem)[elem.length-1]).val(),16);
+	
+	return [lightColor,lightPos];
+}
+
+function displayError(str){
+	$("#threeverContainer .errorField").show();
+	$("#threeverContainer .errorField").append(str);
+}
+function hideError(){
+	$("#threeverContainer .errorField").hide();
+	$("#threeverContainer .errorField").text("");
+}
+
+function processFormData(){
+	hideError();
+	
+	var opts = {};
+	
+	//canvas
+	opts.width = checkElemInt("#threeverContainer #canvas input[name=width]",defaults["width"]);
+	opts.height = checkElemInt("#threeverContainer #canvas input[name=height]",defaults["height"]);
+	
+	//Mesh
+	opts.filepath = checkElemStr("#threeverContainer #mesh input[name=filepath]",defaults["filepath"]);
+	
+	if(opts.filepath !== defaults["filepath"]){
+		var fileExt = opts.filepath.split('.').pop().toLowerCase();
+		if(fileExt !== "js" && fileExt !== "dae" && fileExt !== "obj" && fileExt !== "ctm"){
+			displayError("MESH: Filetype not supported! Try .dae, .obj, .js(best) or .ctm");
+			opts.filepath = "";
+			$("#threeverContainer #mesh input[name=filepath]").val(defaults["filepath"]);
+		}
+	}else{
+		opts.filepath = "";
+	}
+	
+	//Camera
+	var checkedCam = $("#threeverContainer #cameraTypes input[checked=checked]").attr('value');
+	console.log(checkedCam);
+	var camValues = new Array();
+	
+	if(checkedCam == "orthographic"){
+		var elem = $("#threeverContainer #customCam #orthCustomCam input");
+		for(var i=0; i<elem.length; i++){
+			var num = parseFloat(checkElemNum($(elem)[i],defaults["orthCamera"][i]));
+			camValues.push(num);
+		}	
+	}else if(checkedCam == "perspective"){	
+		var elem = $("#threeverContainer #customCam #persCustomCam input");
+		for(var i=0; i<elem.length; i++){
+			var num = parseFloat(checkElemNum($(elem)[i],defaults["persCamera"][i]));
+			camValues.push(num);
+		}
+	}
+	opts.camera = camValues;
+	
+	//CameraPosition
+	var elem = $("#threeverContainer #cameraPosition input");
+	var cameraPos = new Array();
+	
+	for(var i=0; i<elem.length; i++){
+		cameraPos.push(checkElemInt($(elem)[i],defaults["cameraPos"][i]));
+	}
+	
+	opts.cameraPos = cameraPos;
+		
+	//Lights
+	var checkedLight = $("#threeverContainer #lightTypes.radioOpts input[checked=checked]").attr('value');
+	console.log(checkedLight);
+	var lightValues = new Array();
+	
+	//Presets
+	if(checkedLight == "standard"){
+		lightValues = defaults["lightPreset"][0];	
+	}else if(checkedLight == "3Point"){
+		lightValues  = defaults["lightPreset"][1];
+	}else if(checkedLight == "custom"){
+		
+		var ambient, directional, points, spots;
+		
+		//ambient
+		
+		if($("#threeverContainer #addedLights .ambient").length > 0)
+			ambient = [parseInt($("#threeverContainer #addedLights .ambient input").val(),16)];
+		else
+			ambient = [];
+
+		
+		//directional
+		if($("#threeverContainer #addedLights .directional").length >0){
+			directional = lightQueue($("#threeverContainer #addedLights .directional input"));
+		}else
+			directional = [];
+			
+		//point
+		var allPoint = $("#threeverContainer #addedLights .point");
+		if(allPoint.length > 0){
+			points = new Array();
+			for(var i=0; i<allPoint.length; i++){
+				points.push(lightQueue($($(allPoint)[i]).find("input")));
+			}
+		}else{
+			points=[];
+		}
+		
+		//spot
+		var allSpot = $("#threeverContainer #addedLights .spot");
+		if(allSpot.length > 0){
+			spots = new Array();
+			for(var i=0; i<allSpot.length; i++){
+				spots.push(lightQueue($($(allSpot)[i]).find("input")));
+			}
+		}else{
+			spots = [];
+		}
+		
+		lightValues = [ambient,directional,points,spots];
+	}
+	opts.lights = lightValues;
+	
+	//Material
+	
+
+	//diffuse
+	var diffuse = [$("#threeverContainer #material #diffuse input[name=tdiffuse]").val(), //filepath
+				   parseInt($("#threeverContainer #material #diffuse input[name=matColor]").val(),16)]; //color
+	
+	console.log(diffuse[0]);
+	if(diffuse[0] !== ""){
+		var fileExt = diffuse[0].split('.').pop().toLowerCase();
+		if(fileExt !== "png" && fileExt !== "jpg" && fileExt !== "jpeg" && fileExt !== "gif"){
+			displayError("DIFFUSE: Filetype not supported! Try .jpg, .png or .gif");
+			diffuse[0] = "";
+			$("#threeverContainer #material #diffuse input[name=tdiffuse]").val("");
+		}
+	}
+	
+	opts.diffuse = diffuse;
+	
+	//specular
+	var specular = [$("#threeverContainer #material #specular input[name=tspecular]").val(), //filepath
+				   parseInt($("#threeverContainer #material #specular input[name=matColor]").val(),16)]; //color
+	
+	if(specular[0] !== ""){
+		var fileExt = specular[0].split('.').pop().toLowerCase();
+		if(fileExt !== "png" && fileExt !== "jpg" && fileExt !== "jpeg" && fileExt !== "gif"){
+			displayError("SPECULAR: Filetype not supported! Try .jpg, .png or .gif");
+			specular[0] = "";
+			$("#threeverContainer #material #specular input[name=tspecular]").val("");
+		}
+	}
+	
+	opts.specular = specular;
+	
+	//shininess
+	opts.shininess = parseInt($("#threeverContainer #material #specular .mb_sliderValueLabel").text());
+	
+	//normal
+	if($("#threeverContainer #material #normal").is(':visible')){
+		var normal = $("#threeverContainer #material #normal input[name=tnormal]").val(); //filepath
+		
+		if(normal !== ""){
+			var fileExt = normal.split('.').pop().toLowerCase();
+			if(fileExt !== "png" && fileExt !== "jpg" && fileExt !== "jpeg" && fileExt !== "gif"){
+				displayError("NORMAL: Filetype not supported! Try .jpg, .png or .gif");
+				normal = "";
+				$("#threeverContainer #material #normal input[name=tnormal]").val("");
+			}
+		}
+		
+		opts.normal = normal;
+		//scale
+		opts.normalScale = parseInt($("#threeverContainer #material #normal .mb_sliderValueLabel").text())/100;
+	}
+	
+	var isDoubleSide = $("#threeverContainer #material input[name=doublesided]");
+	if($(isDoubleSide).is(':checked')){
+		opts.idDoubleSide = true;
+	}
+	
+	var isWireframe = $("#threeverContainer #material input[name=wireframe]");
+	if($(isWireframe).is(':checked')){
+		opts.isWireframe = true;
+	}
+	
+	JSON.stringify(opts);
+
+	opts = JSON.stringify(opts);
+	console.log(opts);
+	
+	//$("#codeField textarea").val("[threever]"+opts+"[/threever]");
+	//console.log("lol"+parent);
+	parent.document.getElementById('mycode').value = "[threever]"+opts+"[/threever]"; 
+	parent.setText(opts);
+}
+
+$("#threeverContainer input").each(function(index){
+	$(this).blur(function(){processFormData()});
+});
+$("#threeverContainer #submitFormBtn").click(function(){
+	processFormData();
+});
+
+
+function cameraSettings(){
+	var width = parseInt($("#threeverContainer #canvas input[name=width]").val());
+    var height = parseInt($("#threeverContainer #canvas input[name=height]").val());
+	
+	
+	//Cameras
+	//perspective
+	$("#threeverContainer #customCam #persCustomCam input[name=aspect]").val(width/height);
+
+	//orthographic
+	$("#threeverContainer #customCam #orthCustomCam input[name=left]").val(width/-2);
+	$("#threeverContainer #customCam #orthCustomCam input[name=right]").val(width/2);
+	$("#threeverContainer #customCam #orthCustomCam input[name=top]").val(height/2);
+	$("#threeverContainer #customCam #orthCustomCam input[name=bottom]").val(height/-2);
+}
+
+$("#threeverContainer #canvas input[name=width]").blur(function(){
+	cameraSettings();
+});
+
+$("#threeverContainer #canvas input[name=height]").blur(function(){
+	cameraSettings();
+});
+$("#threeverContainer .errorField").click(function(){
+	$(this).hide();
+});
+
+</script>
+</body>
+</html>
