@@ -42,29 +42,10 @@ function add_scripts() {
 	wp_enqueue_script( 'threeverElement' );
 	
 	//Main script
-	wp_deregister_script( 'threever' );
-	wp_register_script( 'threever', plugins_url('inc/js/threever.js',dirname(__FILE__)));
-	wp_enqueue_script( 'threever' );
+	wp_deregister_script( 'viewer' );
+	wp_register_script( 'viewer', plugins_url('inc/js/viewer.js',dirname(__FILE__)));
+	wp_enqueue_script( 'viewer' );
 	
 	
 }    
-
-add_filter('upload_mimes', 'custom_upload_mimes');
-
-//Add mime types for upload support
-function custom_upload_mimes ( $existing_mimes=array() ) {
-// Add file extension 'extension' with mime type 'mime/type'
-$existing_mimes['extension'] = 'mime/type';
- 
-// add as many as you like e.g. 
-
-$existing_mimes['obj'] = 'application/octet-stream'; 
-$existing_mimes['dae'] = 'application/octet-stream';
-$existing_mimes['js'] = 'application/javascript';
-$existing_mimes['ctm'] = 'application/javascript';
- 
-// and return the new full result
-return $existing_mimes;
-
-}
 ?>

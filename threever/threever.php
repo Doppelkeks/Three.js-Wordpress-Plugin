@@ -16,10 +16,22 @@ Author URI: http://matthiasguntrum.com
 $hasThree = false;
 $threeverId = 0;
 
-
 //Includes
-include('inc/scripts.php');
-include('inc/data-processing.php');
 
+//Scripts
+include('inc/scriptsviewer.inc.php');
+include('inc/scriptsadmin.inc.php');
+
+//Mimetypes
+include('inc/mimetypes.inc.php');
+
+//adminPanel
+include('inc/adminpanel.inc.php');
+
+// TODO: settingsPanel
+//include('inc/settingspanel.inc.php');
+
+//ShortcodeHandler
+include('inc/shortcodehandler.php');
 
 ?>

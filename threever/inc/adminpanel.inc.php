@@ -1,12 +1,8 @@
 <?php
-include('scriptsPanel.php');
 
 /* Define the custom box */
 
 add_action( 'add_meta_boxes', 'threever_add_custom_box' );
-
-// backwards compatible (before WP 3.0)
-// add_action( 'admin_init', 'myplugin_add_custom_box', 1 );
 
 /* Do something with the data entered */
 add_action('pre_post_update', 'threever_save_postdata' );
@@ -39,12 +35,21 @@ function threever_inner_custom_box( $post ) {
   wp_nonce_field( plugin_basename( __FILE__ ), 'threever_nonce' );
   $data = get_post_custom($post->{'id'});
 
+  //Dialog Buttons
   echo '<button id="toggleIframe" href="#" onclick="return false" >Open Dialog</button>';
   echo '<button id="togglePreview" href="#" onclick="return false" >3D Preview</button>';
-  echo '<canvas style="position:absolute; display:none; z-index:9500; border:2px solid #000; border-radius:5px; background:#666; padding:0px; left:700px; top:50px; background-image:url('.plugins_url('inc/adminPanel/images/gradient.png',dirname(__FILE__)).'); background-size:100%; background-position: center center;" id="myCanvas"></canvas>';
-  echo '<textarea name="mycodearea" id="mycode" cols="30" rows="10" readonly="readonly" style="width:100%; height:100px;">'.$data['threeverCode'][0].'</textarea>';
+ 
+  //shortcode area. fills with generated shortcodes
+  $style = 'width:100%; height:100px;';
+  echo '<textarea name="mycodearea" id="mycode" cols="30" rows="10" readonly="readonly" style='.$style.'">'.$data['threeverCode'][0].'</textarea>';
+  
+  //Prepare adminpanel dialog
   echo '<div id="iframeholder" >'.plugins_url('adminPanel/index.html', __FILE__).'</div>';
 
+  //3D Preview
+  $style = 'position: absolute; display:none; z-index:9500; border:2px solid #000; border-radius:5px; background:#666; padding:0px; left:700px; top:50px; background-image:url('.plugins_url('inc/adminPanel/images/gradient.png',dirname(__FILE__)).'); background-size:100%; background-position: center center;';
+  echo '<canvas style="'.$style.'" id="myCanvas"></canvas>';
+  
 }
 
 /* When the post is saved, saves our custom data */
@@ -61,7 +66,6 @@ function threever_save_postdata( $post_id ) {
   if ( !wp_verify_nonce( $_POST['threever_nonce'], plugin_basename( __FILE__ ) ) )
       return;
 
-  
   // Check permissions
   if ( 'page' == $_POST['post_type'] ) 
   {
@@ -75,37 +79,12 @@ function threever_save_postdata( $post_id ) {
   }
 
   // OK, we're authenticated: we need to find and save the data
-
-  $mydata = $_POST['mycodearea'];
+  // Save the last generated shortcode for next editing
   
+  $mydata = $_POST['mycodearea'];
   add_post_meta($post_id, 'threeverCode', $mydata, true);
   update_post_meta($post_id, 'threeverCode', $mydata);
 
 }
-
-function processdatahandler($atts, $content = null ) {
-   if(!$hasThree){
-		$hasThree = true;
-		add_scripts();	
-   }
-   
-   $content = str_replace("&#8220;", "\"", $content);
-   $content = str_replace("&#8221;", "\"", $content);
-   $content = json_decode($content);
-   
-   if($content !== NULL){
-
-		$content->{'id'} = $GLOBALS["threeverId"];
-		echo($content->{'id'});
-		$GLOBALS["threeverId"]++;
-		return '<canvas class="threever">'.json_encode($content).'</canvas>';
-   
-   }else{
-   
-		echo '<p class="error">There was an error with the shortcode</p>';
-   }
-}
-
-add_shortcode( 'threever', 'processdatahandler' );
 
 ?>
